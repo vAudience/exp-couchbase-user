@@ -19,10 +19,10 @@ RUN apt-get update && \
     apt-get autoremove && apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ARG CB_VERSION=4.5.1
+ARG CB_VERSION=5.0.1
 ARG CB_RELEASE_URL=http://packages.couchbase.com/releases
-ARG CB_PACKAGE=couchbase-server-community_4.5.1-ubuntu14.04_amd64.deb
-ARG CB_SHA256=de983d0137bd2de2608e52cbfdf01de6dd9d3c1d9bc45bd0702d253245a8a234
+ARG CB_PACKAGE=couchbase-server-community_5.0.1-ubuntu14.04_amd64.deb
+ARG CB_SHA256=d44195f78a3858e6d274ba211b59fb56921823aa567965ac90531f393815fc1d
 
 ENV PATH=$PATH:/opt/couchbase/bin:/opt/couchbase/bin/tools:/opt/couchbase/bin/install
 
@@ -36,12 +36,14 @@ RUN wget -N $CB_RELEASE_URL/$CB_VERSION/$CB_PACKAGE && \
     dpkg -i ./$CB_PACKAGE && rm -f ./$CB_PACKAGE
 
 # Add runit script for couchbase-server
-COPY scripts/run /etc/service/couchbase-server/run
-RUN chown -R couchbase:couchbase /etc/service
+#COPY scripts/run /etc/service/couchbase-server/run
 
 # Add dummy script for commands invoked by cbcollect_info that
 # make no sense in a Docker container
-COPY scripts/dummy.sh /usr/local/bin/
+#COPY scripts/dummy.sh /usr/local/bin/
+RUN echo '#!/bin/sh' > /usr/local/bin/dummy.sh; echo 'echo "Running in Docker container - $0 not available"' >> /usr/local/bin/dummy.sh
+RUN chmod +x /usr/local/bin/dummy.sh
+
 RUN ln -s dummy.sh /usr/local/bin/iptables-save && \
     ln -s dummy.sh /usr/local/bin/lvdisplay && \
     ln -s dummy.sh /usr/local/bin/vgdisplay && \
@@ -50,10 +52,22 @@ RUN ln -s dummy.sh /usr/local/bin/iptables-save && \
 # Fix curl RPATH
 RUN chrpath -r '$ORIGIN/../lib' /opt/couchbase/bin/curl
 
+
+RUN cd /opt/couchbase && mkdir -p var/lib/couchbase \
+         var/lib/couchbase/config \
+         var/lib/couchbase/data \
+         var/lib/couchbase/stats \
+         var/lib/couchbase/logs \
+         var/lib/moxi
+
+RUN chown -R couchbase:couchbase var
+#RUN exec chpst -ucouchbase  /opt/couchbase/bin/couchbase-server -- -kernel global_enable_tracing false -noinput
+
 # Add bootstrap script
-COPY scripts/entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["couchbase-server"]
+#COPY scripts/entrypoint.sh /
+#ENTRYPOINT ["/entrypoint.sh"]
+USER 1000
+CMD ["/opt/couchbase/bin/couchbase-server","--","-kernel","global_enable_tracing","false","-noinput"]
 
 # 8091: Couchbase Web console, REST/HTTP interface
 # 8092: Views, queries, XDCR
