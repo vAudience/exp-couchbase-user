@@ -50,6 +50,9 @@ RUN ln -s dummy.sh /usr/local/bin/iptables-save && \
 # Fix curl RPATH
 RUN chrpath -r '$ORIGIN/../lib' /opt/couchbase/bin/curl
 
+# allow Arbitrary User IDs to write to /opt/couchbase
+RUN chgrp -R 0 /opt/couchbase && chmod -R g=u /opt/couchbase
+
 # Add bootstrap script
 COPY scripts/entrypoint.sh /
 ENTRYPOINT ["/etc/service/couchbase-server/run"]
