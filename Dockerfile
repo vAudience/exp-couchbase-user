@@ -52,8 +52,8 @@ RUN chrpath -r '$ORIGIN/../lib' /opt/couchbase/bin/curl
 
 # Add bootstrap script
 COPY scripts/entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["couchbase-server"]
+ENTRYPOINT ["/etc/service/couchbase-server/run"]
+#CMD ["couchbase-server"]
 
 # 8091: Couchbase Web console, REST/HTTP interface
 # 8092: Views, queries, XDCR
@@ -67,5 +67,3 @@ CMD ["couchbase-server"]
 # 18093: Query services (SSL) (4.0+)
 # 18094: Full-text Search (SSL) (4.5+)
 EXPOSE 8091 8092 8093 8094 11207 11210 11211 18091 18092 18093 18094
-VOLUME /opt/couchbase/var
-

@@ -3,17 +3,12 @@
 exec 2>&1
 
 # Create directories where couchbase stores its data
-cd /opt/couchbase
-mkdir -p var/lib/couchbase \
-         var/lib/couchbase/config \
-         var/lib/couchbase/data \
-         var/lib/couchbase/stats \
-         var/lib/couchbase/logs \
-         var/lib/moxi
+cd /opt/couchbase/var
+mkdir -p lib/couchbase \
+         lib/couchbase/config \
+         lib/couchbase/data \
+         lib/couchbase/stats \
+         lib/couchbase/logs \
+         lib/moxi
 
-chown -R couchbase:couchbase var
-if [ $(whoami) = "couchbase" ]; then
-  exec /opt/couchbase/bin/couchbase-server -- -kernel global_enable_tracing false -noinput
-else
-  exec chpst -ucouchbase  /opt/couchbase/bin/couchbase-server -- -kernel global_enable_tracing false -noinput
-fi
+exec /opt/couchbase/bin/couchbase-server -- -kernel global_enable_tracing false -noinput
