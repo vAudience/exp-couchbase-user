@@ -32,7 +32,7 @@ spec:
       containers:
         -
           name: couchbase-0
-          image: 'cgghmm/cb451:001'
+          image: 'cgghmm/cb451:002'
           ports:
             -
               containerPort: 8091
