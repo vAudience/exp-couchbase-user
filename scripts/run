@@ -10,5 +10,8 @@ mkdir -p lib/couchbase \
          lib/couchbase/stats \
          lib/couchbase/logs \
          lib/moxi
+chgrp -R 0 lib
+chmod -R g=u lib
+chmod -R g+s lib
 
 exec /opt/couchbase/bin/couchbase-server -- -kernel global_enable_tracing false -noinput
