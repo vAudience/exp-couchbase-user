@@ -4,10 +4,11 @@ metadata:
   annotations:
     volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/aws-ebs
   name: couchbase-0
+  namespace: twitch-extension-prod
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 10Gi
   storageClassName: ebs

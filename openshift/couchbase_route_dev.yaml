@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Route
 metadata:
   name: couchbase-0
+  namespace: twitch-extension-dev
 spec:
   host: couchbase-0-twitch-extension-dev.e4ff.pro-eu-west-1.openshiftapps.com
   port:
